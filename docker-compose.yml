@@ -1,0 +1,31 @@
+version: '3'
+services:
+  microservice:
+    build: .
+    image: pedroarapua/nodejs_servicemesh_microservice
+    container_name: 'nodejs_servicemesh_microservice'
+    command: npm run start-microservice
+    ports:
+      - 3000:80
+
+  gateway:
+    build: .
+    image: pedroarapua/nodejs_servicemesh_gateway
+    container_name: 'nodejs_servicemesh_gateway'
+    command: npm run start-gateway
+    ports:
+      - 3001:80
+    environment:
+      - NODEJS_SERVICEMESH_MICROSERVICE=http://microservice
+    links:
+      - microservice
+
+  worker:
+    build: .
+    image: pedroarapua/nodejs_servicemesh_worker
+    container_name: 'nodejs_servicemesh_worker'
+    command: npm run start-worker
+    environment:
+      - NODEJS_SERVICEMESH_GATEWAY=http://gateway
+    links:
+      - gateway

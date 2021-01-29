@@ -1,0 +1,17 @@
+{
+  "name": "nodejs-servicemesh",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start-microservice": "node ./microservice",
+    "start-worker": "node ./worker",
+    "start-gateway": "node ./gateway"
+  },
+  "author": "Pedro Henrique F. Dias",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
+}

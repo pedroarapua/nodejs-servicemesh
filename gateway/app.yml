@@ -1,0 +1,75 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nodejs-servicemesh
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  revisionHistoryLimit: 3
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - name: gateway
+        image: pedroarapua/nodejs_servicemesh_gateway:latest
+        command: ['npm', 'run', 'start-gateway']
+        env:
+        - name: NODEJS_SERVICEMESH_MICROSERVICE
+          value: "http://microservice.nodejs-servicemesh.svc.cluster.local"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 0.5Gi        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nodejs-servicemesh
+  name: gateway
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: gateway
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nodejs-servicemesh
+  name: gateway-lb
+spec:
+  selector:
+    app: gateway
+  ports:
+    - port: 80
+  type: LoadBalancer
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  namespace: nodejs-servicemesh
+  name: gateway
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: gateway
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50

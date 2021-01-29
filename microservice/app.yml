@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nodejs-servicemesh
+  name: microservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: microservice
+  revisionHistoryLimit: 1
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        app: microservice
+    spec:
+      containers:
+      - name: microservice
+        image: pedroarapua/nodejs_servicemesh_microservice:latest
+        command: ['npm', 'run', 'start-microservice']
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 0.5Gi        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nodejs-servicemesh
+  name: microservice
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: microservice
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nodejs-servicemesh
+  name: microservice-lb
+spec:
+  selector:
+    app: microservice
+  ports:
+    - port: 80
+  type: LoadBalancer
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  namespace: nodejs-servicemesh
+  name: microservice
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: microservice
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50

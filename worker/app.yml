@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nodejs-servicemesh
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  revisionHistoryLimit: 3
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        app: worker
+    spec:
+      containers:
+      - name: worker
+        image: pedroarapua/nodejs_servicemesh_worker:latest
+        command: ['npm', 'run', 'start-worker']
+        env:
+        - name: NODEJS_SERVICEMESH_GATEWAY
+          value: "http://gateway.nodejs-servicemesh.svc.cluster.local"
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 0.5Gi
