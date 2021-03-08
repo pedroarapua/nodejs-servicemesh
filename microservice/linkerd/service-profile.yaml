@@ -5,21 +5,26 @@ metadata:
   namespace: nodejs-servicemesh
 spec:
   routes:
-  - name: GET /
-    isRetryable: true # Define it's safe to retry this route
-    timeout: 100ms # Define a timeout for this route
+  - name: GET /error
     condition:
       method: GET
-      pathRegex: /
-  - name: GET /about
+      pathRegex: /error
     isRetryable: true # Define it's safe to retry this route
-    timeout: 100ms # Define a timeout for this route
-    condition:
-      method: GET
-      pathRegex: /about
-  - name: GET /contact
-    isRetryable: true # Define it's safe to retry this route
-    timeout: 100ms # Define a timeout for this route
-    condition:
-      method: GET
-      pathRegex: /contact
+    responseClasses:
+    - condition:
+        status:
+          min: 500
+          max: 599
+      isFailure: true
+  # - name: GET /about
+  #   isRetryable: true # Define it's safe to retry this route
+  #   timeout: 100ms # Define a timeout for this route
+  #   condition:
+  #     method: GET
+  #     pathRegex: /about
+  # - name: GET /contact
+  #   isRetryable: true # Define it's safe to retry this route
+  #   timeout: 100ms # Define a timeout for this route
+  #   condition:
+  #     method: GET
+  #     pathRegex: /contact

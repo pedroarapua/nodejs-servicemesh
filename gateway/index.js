@@ -5,6 +5,10 @@ const urlMicroservice = process.env.NODEJS_SERVICEMESH_MICROSERVICE;
 //create a server object:
 http.createServer(function (req, res) {
   const url = req.url;
+  if(url ==='/favicon.ico'){
+    return res.end(); //end the response
+  }
+
   const urlGet = `${urlMicroservice}${url}`;
 
   http.get(urlGet, (resp) => {
@@ -21,8 +25,8 @@ http.createServer(function (req, res) {
       res.end(); //end the response
     });
 
-    console.info(`Sucesso Gateway, url => ${url}`);
+    console.info(`gateway, url => ${url}`);
   }).on("error", (err) => {
     console.log("Error: " + err.message);
   });
-}).listen(port); //the server object listens on port 8080
+}).listen(port, undefined, function() { console.log(`Running in http://localhost:${port}`) }); //the server object listens on port 8080
