@@ -2,7 +2,7 @@ version: '3'
 services:
   microservice:
     build: .
-    image: pedroarapua/nodejs_servicemesh_microservice
+    image: pedroarapua/nodejs-servicemesh:latest
     container_name: 'nodejs_servicemesh_microservice'
     command: npm run start-microservice
     ports:
@@ -10,7 +10,7 @@ services:
 
   gateway:
     build: .
-    image: pedroarapua/nodejs_servicemesh_gateway
+    image: pedroarapua/nodejs-servicemesh:latest
     container_name: 'nodejs_servicemesh_gateway'
     command: npm run start-gateway
     ports:
@@ -22,10 +22,11 @@ services:
 
   worker:
     build: .
-    image: pedroarapua/nodejs_servicemesh_worker
+    image: pedroarapua/nodejs-servicemesh:latest
     container_name: 'nodejs_servicemesh_worker'
     command: npm run start-worker
     environment:
-      - NODEJS_SERVICEMESH_GATEWAY=http://gateway
+      - NODEJS_SERVICEMESH_GATEWAY_URL=http://gateway
+      - NODEJS_SERVICEMESH_GATEWAY_ROUTES=/timeout/error,/about
     links:
       - gateway

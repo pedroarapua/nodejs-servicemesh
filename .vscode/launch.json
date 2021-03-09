@@ -37,7 +37,8 @@
         "<node_internals>/**"
       ],
       "env": {
-        "NODEJS_SERVICEMESH_GATEWAY": "http://localhost:3001"
+        "PORT": "3001",
+        "NODEJS_SERVICEMESH_GATEWAY": "http://localhost:300"
       },
       "program": "${workspaceFolder}/worker/index.js"
     }

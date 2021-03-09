@@ -19,11 +19,13 @@ spec:
     spec:
       containers:
       - name: worker
-        image: pedroarapua/nodejs_servicemesh_worker:latest
+        image: pedroarapua/nodejs-servicemesh:latest
         command: ['npm', 'run', 'start-worker']
         env:
-        - name: NODEJS_SERVICEMESH_GATEWAY
+        - name: NODEJS_SERVICEMESH_GATEWAY_URL
           value: "http://gateway.nodejs-servicemesh.svc.cluster.local"
+        - name: NODEJS_SERVICEMESH_GATEWAY_ROUTES
+          value: "/timeout/error,/about"
         resources:
           limits:
             cpu: 500m

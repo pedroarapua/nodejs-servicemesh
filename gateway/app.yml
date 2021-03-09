@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: gateway
-        image: pedroarapua/nodejs_servicemesh_gateway:latest
+        image: pedroarapua/nodejs-servicemesh:latest
         command: ['npm', 'run', 'start-gateway']
         env:
         - name: NODEJS_SERVICEMESH_MICROSERVICE
@@ -70,6 +70,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: gateway
-  minReplicas: 1
+  minReplicas: 2
   maxReplicas: 10
   targetCPUUtilizationPercentage: 50

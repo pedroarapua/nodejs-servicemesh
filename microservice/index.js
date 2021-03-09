@@ -1,22 +1,29 @@
 const http = require('http');
 const port = process.env.PORT || 80;
-const delay = process.env.DELAY || 1000
+const host = process.env.HOSTNAME || 'localhost';
 
 //create a server object:
 http.createServer(function (req, res) {
-  setTimeout(function() {
-    var url = req.url;
-    if(url ==='/favicon.ico'){
-      return res.end(); //end the response
-    } else if(url ==='/error'){
-      res.write('<h1>error<h1>'); //write a response
-      res.statusCode = 500
+  res.setHeader('content-type', 'text/html')
+  var url = req.url;
+  if(url ==='/favicon.ico'){
+    return res.end(); //end the response
+  } else if(url ==='/timeout') {
+    setTimeout(function() {
+      res.write(`<h1>Timeout</h1><h2>http://${host}:${port}${url}</h2>`) //write a response
       res.end(); //end the response
-    } else{
-      res.write('<h1>Hello World!<h1>'); //write a response
-      res.end(); //end the response
-    }
-    
-    console.info(`microservice, url => ${url}`);
-  }, delay)
-}).listen(port, undefined, function() { console.log(`Running in http://localhost:${port}`) }); //the server object listens on port 8080
+    }, 1000);
+  } else if(url ==='/error' || url === '/errorretry') {
+    res.statusCode = 500
+    res.write(`<h1>Internal Server Error</h1><h2>http://${host}:${port}${url}</h2>`) //write a response
+    res.end()
+  } else if(url ==='/about') {
+    res.write(`<h1>About</h1><h2>http://${host}:${port}${url}</h2>`) //write a response
+    res.end(); //end the response
+  } else {
+    res.write(`<h1>Hello World!</h1><h2>http://${host}:${port}${url}</h2>`) //write a response
+    res.end(); //end the response
+  }
+  
+  console.info(`microservice, url => http://${host}:${port}${url}`);
+}).listen(port, undefined, function() { console.log(`Running in http://${host}:${port}`) }); //the server object listens on port 8080

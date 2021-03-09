@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: microservice
-        image: pedroarapua/nodejs_servicemesh_microservice:latest
+        image: pedroarapua/nodejs-servicemesh:latest
         command: ['npm', 'run', 'start-microservice']
         ports:
         - containerPort: 80
@@ -67,6 +67,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: microservice
-  minReplicas: 1
+  minReplicas: 2
   maxReplicas: 10
   targetCPUUtilizationPercentage: 50

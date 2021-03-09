@@ -1,0 +1,23 @@
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: gateway.nodejs-servicemesh.svc.cluster.local
+  namespace: nodejs-servicemesh
+spec:
+  routes:
+  - name: GET /error
+    condition:
+      method: GET
+      pathRegex: /error
+    isRetryable: false # Define it's safe to retry this route
+  - name: GET /timeout
+    isRetryable: false
+    #timeout: 100ms # Define a timeout for this route
+    condition:
+      method: GET
+      pathRegex: /timeout
+  - name: GET /about
+    isRetryable: false
+    condition:
+      method: GET
+      pathRegex: /about

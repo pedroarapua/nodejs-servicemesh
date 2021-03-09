@@ -1,6 +1,7 @@
 const axios = require('axios');
 
-const urlGateway = process.env.NODEJS_SERVICEMESH_GATEWAY;
+const urlGateway = process.env.NODEJS_SERVICEMESH_GATEWAY_URL;
+const routes = ('' || process.env.NODEJS_SERVICEMESH_GATEWAY_ROUTES).split(',');
 
 function call(url) {
   axios.get(url)
@@ -12,6 +13,9 @@ function call(url) {
     });
 }
 
-setInterval(async () => {
-  call(urlGateway);
-}, 1000)
+for(let i = 0; i < routes.length; i++) {
+  const url = urlGateway + routes[i];
+  setInterval(async () => {
+    call(url);
+  }, 1000)
+}
