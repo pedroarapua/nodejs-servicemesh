@@ -25,7 +25,7 @@ spec:
         - name: NODEJS_SERVICEMESH_GATEWAY_URL
           value: "http://gateway.nodejs-servicemesh.svc.cluster.local"
         - name: NODEJS_SERVICEMESH_GATEWAY_ROUTES
-          value: "/timeout/error,/about"
+          value: "/timeout,/error,/about,/notes"
         resources:
           limits:
             cpu: 500m
@@ -33,3 +33,17 @@ spec:
           requests:
             cpu: 200m
             memory: 0.5Gi
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  namespace: nodejs-servicemesh
+  name: worker
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: worker
+  minReplicas: 5
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50

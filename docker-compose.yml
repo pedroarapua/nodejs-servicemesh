@@ -27,6 +27,6 @@ services:
     command: npm run start-worker
     environment:
       - NODEJS_SERVICEMESH_GATEWAY_URL=http://gateway
-      - NODEJS_SERVICEMESH_GATEWAY_ROUTES=/timeout/error,/about
+      - NODEJS_SERVICEMESH_GATEWAY_ROUTES=/timeout,/error,/about
     links:
       - gateway

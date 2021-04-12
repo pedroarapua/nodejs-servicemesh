@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       annotations:
-        linkerd.io/inject: enabled
+        linkerd.io/inject: ingress
       labels:
         app: gateway
     spec:
@@ -24,8 +24,11 @@ spec:
         env:
         - name: NODEJS_SERVICEMESH_MICROSERVICE
           value: "http://microservice.nodejs-servicemesh.svc.cluster.local"
+        - name: NODEJS_SERVICEMESH_MICROSERVICE_GRPC
+          value: "microservice.nodejs-servicemesh.svc.cluster.local:50051"
         ports:
         - containerPort: 80
+          name: http
         resources:
           limits:
             cpu: 500m
@@ -41,24 +44,13 @@ metadata:
   name: gateway
 spec:
   ports:
-  - port: 80
+  - name: http
+    port: 80
     protocol: TCP
     targetPort: 80
   selector:
     app: gateway
   type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: nodejs-servicemesh
-  name: gateway-lb
-spec:
-  selector:
-    app: gateway
-  ports:
-    - port: 80
-  type: LoadBalancer
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler

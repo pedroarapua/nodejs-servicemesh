@@ -12,7 +12,8 @@
         "<node_internals>/**"
       ],
       "env": {
-        "PORT": "3000"
+        "PORT": "3000",
+        "GRPC_PORT": "50051"
       },
       "program": "${workspaceFolder}/microservice/index.js"
     },
@@ -25,7 +26,8 @@
       ],
       "env": {
         "PORT": "3001",
-        "NODEJS_SERVICEMESH_MICROSERVICE": "http://localhost:3000"
+        "NODEJS_SERVICEMESH_MICROSERVICE": "http://localhost:3000",
+        "NODEJS_SERVICEMESH_MICROSERVICE_GRPC": "localhost:50051"
       },
       "program": "${workspaceFolder}/gateway/index.js"
     },
@@ -37,8 +39,8 @@
         "<node_internals>/**"
       ],
       "env": {
-        "PORT": "3001",
-        "NODEJS_SERVICEMESH_GATEWAY": "http://localhost:300"
+        "NODEJS_SERVICEMESH_GATEWAY_URL": "http://localhost:3001",
+        "NODEJS_SERVICEMESH_GATEWAY_ROUTES": "/timeout,/error,/about,/notes"
       },
       "program": "${workspaceFolder}/worker/index.js"
     }

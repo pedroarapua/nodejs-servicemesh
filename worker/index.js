@@ -5,7 +5,9 @@ const routes = ('' || process.env.NODEJS_SERVICEMESH_GATEWAY_ROUTES).split(',');
 
 function call(url) {
   axios.get(url)
-    .then(() => {
+    .then((response) => {
+      const { status, data } = response
+      console.log(`status => ${status}, body: ${data}`);
       console.log(`Sucesso Worker, url => ${url}`);
     })
     .catch(error => {
