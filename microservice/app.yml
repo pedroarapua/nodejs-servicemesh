@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       annotations:
-        linkerd.io/inject: enabled
+        linkerd.io/inject: ingress
       labels:
         app: microservice
     spec:
@@ -21,8 +21,14 @@ spec:
       - name: microservice
         image: pedroarapua/nodejs-servicemesh:latest
         command: ['npm', 'run', 'start-microservice']
+        env:
+        - name: GRPC_PORT
+          value: "50051"
         ports:
+        - containerPort: 50051
+          name: grpc
         - containerPort: 80
+          name: http
         resources:
           limits:
             cpu: 500m
@@ -37,25 +43,16 @@ metadata:
   namespace: nodejs-servicemesh
   name: microservice
 spec:
+  clusterIP: None
   ports:
-  - port: 80
-    protocol: TCP
+  - name: http
+    port: 80
     targetPort: 80
+  - name: grpc
+    port: 50051
+    targetPort: 50051
   selector:
     app: microservice
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: nodejs-servicemesh
-  name: microservice-lb
-spec:
-  selector:
-    app: microservice
-  ports:
-    - port: 80
-  type: LoadBalancer
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler

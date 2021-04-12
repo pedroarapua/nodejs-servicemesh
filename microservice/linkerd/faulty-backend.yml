@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: faulty-backend
+  namespace: nodejs-servicemesh
+data:
+ nginx.conf: |-
+    events {}
+    http {
+        server {
+          listen 80;
+            location / {
+                return 500;
+            }
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: faulty-backend
+  namespace: nodejs-servicemesh
+  labels:
+    app: faulty-backend
+spec:
+  selector:
+    matchLabels:
+      app: faulty-backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: faulty-backend
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: faulty-backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: faulty-backend
+  namespace: nodejs-servicemesh
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: faulty-backend
